@@ -5,6 +5,9 @@ const dotenv = require('dotenv');
 // Load environment variables
 dotenv.config();
 
+// Import routes
+const moviesRoutes = require('./src/routes/movies');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -26,11 +29,18 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// API routes (placeholder)
+// API routes
+app.use('/api/movies', moviesRoutes);
+
+// Legacy API route (for backwards compatibility)
 app.get('/api/movies', (req, res) => {
   res.json({ 
-    movies: [],
-    message: 'Movies endpoint ready for implementation'
+    message: 'Use /api/movies/popular or /api/movies/search instead',
+    endpoints: {
+      popular: '/api/movies/popular?limit=10',
+      search: '/api/movies/search?q=batman&limit=10',
+      genres: '/api/movies/genres'
+    }
   });
 });
 
