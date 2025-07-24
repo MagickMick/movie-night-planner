@@ -4,11 +4,12 @@ import { getGenres } from './get-genres';
 import { searchMovies } from './search-movies';
 
 /**
- * TMDB Service
-*/
+ * Modulaire TMDB Service
+ * Exports alle TMDB gerelateerde functies
+ */
 export const TmdbService = {
-  fetchFromTMDB,
   getPopularMovies,
+  searchMovies,
   getGenres,
-  searchMovies
+  fetchFromTMDB // Voor direct gebruik indien nodig
 };
