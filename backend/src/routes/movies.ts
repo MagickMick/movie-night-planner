@@ -42,7 +42,7 @@ router.get('/popular', async (req: Request, res: Response) => {
 // GET /api/movies/search - Search movies
 router.get('/search', async (req: Request, res: Response) => {
   try {
-    const { q: query, limit = '10', page = '1' } = req.query;
+    const { q: query, limit = '10' } = req.query;
     
     if (!query || typeof query !== 'string') {
       return res.status(400).json({
@@ -52,22 +52,14 @@ router.get('/search', async (req: Request, res: Response) => {
     }
 
     const parsedLimit = parseInt(limit as string);
-    const parsedPage = parseInt(page as string);
-    
     if (parsedLimit > 20) {
       return res.status(400).json({
         error: 'Limit cannot exceed 20 movies per request'
       });
     }
 
-    if (parsedPage < 1) {
-      return res.status(400).json({
-        error: 'Page must be a positive number'
-      });
-    }
-
-    console.log(`🔍 Searching movies for: "${query}" (limit: ${parsedLimit}, page: ${parsedPage})`);
-    const result = await TmdbService.searchMovies(query, parsedLimit, parsedPage);
+    console.log(`🔍 Searching movies for: "${query}" (limit: ${parsedLimit})`);
+    const result = await TmdbService.searchMovies(query, parsedLimit);
     
     res.json({
       success: true,

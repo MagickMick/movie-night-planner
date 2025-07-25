@@ -5,11 +5,10 @@ import { fetchFromTMDB } from '../fetch-from-tmdb';
     * search movies from TMDB
     * @param query - The search query for movies
     * @param limit - The number of movies to return
-    * @param page - The page number to fetch
     * @returns A promise that resolves to an object containing search results
     * and pagination information
 */
-export const searchMovies = async (query: string, limit = 10, page = 1): Promise<ISearchMoviesResponse> => {
+export const searchMovies = async (query: string, limit = 10): Promise<ISearchMoviesResponse> => {
     try {
       if (!query || query.trim() === '') {
         return {
@@ -24,7 +23,7 @@ export const searchMovies = async (query: string, limit = 10, page = 1): Promise
       const data = await fetchFromTMDB('/search/movie', {
         query: query.trim(),
         language: 'en-US',
-        page: page,
+        page: 1,
         include_adult: false
       });
 

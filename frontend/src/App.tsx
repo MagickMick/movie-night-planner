@@ -1,5 +1,5 @@
 import { QueryProvider } from '@/providers/QueryProvider';
-import { MovieSearchAndList } from '@/components/MovieSearchAndList';
+import { InfiniteMovieList } from '@/components/InfiniteMovieList';
 import '@/globals.css';
 import './reset.css';
 import './App.css';
@@ -24,7 +24,7 @@ function App() {
         {/* Main Content Section */}
         <main className="container mx-auto px-4 pb-16">
           <div className="bg-background rounded-2xl shadow-2xl overflow-hidden">
-            <MovieSearchAndList limit={20} />
+            <InfiniteMovieList limit={20} />
           </div>
         </main>
       </div>
