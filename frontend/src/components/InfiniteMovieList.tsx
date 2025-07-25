@@ -1,4 +1,4 @@
-import { useInfinitePopularMovies } from '@/hooks/useMovies';
+import { MovieHook } from '../hooks/movie/movie-hook';
 import { MovieListItem } from './MovieListItem';
 import { Loader2, AlertCircle, Film } from 'lucide-react';
 import { useEffect, useCallback } from 'react';
@@ -17,7 +17,7 @@ export const InfiniteMovieList = ({ limit = 20 }: InfiniteMovieListProps) => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfinitePopularMovies(limit);
+  } = MovieHook.useInfinitePopularMovies(limit);
 
   const { ref, inView } = useInView({
     threshold: 0,

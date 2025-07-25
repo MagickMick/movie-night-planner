@@ -42,7 +42,7 @@ router.get('/popular', async (req: Request, res: Response) => {
 // GET /api/movies/search - Search movies
 router.get('/search', async (req: Request, res: Response) => {
   try {
-    const { q: query, limit = '10' } = req.query;
+    const { q: query, limit = '10', page = '1' } = req.query;
     
     if (!query || typeof query !== 'string') {
       return res.status(400).json({
@@ -52,14 +52,22 @@ router.get('/search', async (req: Request, res: Response) => {
     }
 
     const parsedLimit = parseInt(limit as string);
+    const parsedPage = parseInt(page as string);
+    
     if (parsedLimit > 20) {
       return res.status(400).json({
         error: 'Limit cannot exceed 20 movies per request'
       });
     }
 
-    console.log(`🔍 Searching movies for: "${query}" (limit: ${parsedLimit})`);
-    const result = await TmdbService.searchMovies(query, parsedLimit);
+    if (parsedPage < 1) {
+      return res.status(400).json({
+        error: 'Page must be a positive number'
+      });
+    }
+
+    console.log(`🔍 Searching movies for: "${query}" (limit: ${parsedLimit}, page: ${parsedPage})`);
+    const result = await TmdbService.searchMovies(query, parsedLimit, parsedPage);
     
     res.json({
       success: true,
@@ -92,6 +100,64 @@ router.get('/genres', async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       error: 'Failed to fetch genres',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// GET /api/movies/discover - Discover movies with filtering
+router.get('/discover', async (req: Request, res: Response) => {
+  try {
+    const { 
+      limit = '20', 
+      page = '1', 
+      with_genres,
+      query,
+      sort_by = 'popularity.desc'
+    } = req.query;
+    
+    const parsedLimit = parseInt(limit as string);
+    const parsedPage = parseInt(page as string);
+    const parsedGenre = with_genres ? parseInt(with_genres as string) : null;
+    
+    if (parsedLimit > 20) {
+      return res.status(400).json({
+        error: 'Limit cannot exceed 20 movies per request'
+      });
+    }
+
+    if (parsedPage < 1) {
+      return res.status(400).json({
+        error: 'Page must be a positive number'
+      });
+    }
+
+    console.log(`🔍 Discovering movies with filters:`, {
+      query: query || 'none',
+      genre: parsedGenre || 'all',
+      limit: parsedLimit,
+      page: parsedPage,
+      sort_by
+    });
+
+    const result = await TmdbService.discoverMovies({
+      page: parsedPage,
+      limit: parsedLimit,
+      with_genres: parsedGenre,
+      query: query as string,
+      sort_by: sort_by as string
+    });
+    
+    res.json({
+      success: true,
+      data: result,
+      message: `Found ${result.movies.length} movies`
+    });
+  } catch (error) {
+    console.error('❌ Error in /api/movies/discover:', error instanceof Error ? error.message : error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to discover movies',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
   }

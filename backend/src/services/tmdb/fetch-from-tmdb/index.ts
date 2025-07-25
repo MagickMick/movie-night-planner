@@ -28,7 +28,7 @@ export const getTMDBConfig = (): TMDBConfig => {
 };
 
 // Modulaire fetchFromTMDB functie
-export const fetchFromTMDB = async (endpoint: string, params: TMDBParams = {}): Promise<any> => {
+export const fetchFromTMDB = async <T = any>(endpoint: string, params: TMDBParams = {}): Promise<T> => {
   try {
     const config = getTMDBConfig();
     const url = new URL(`${config.baseURL}${endpoint}`);
@@ -58,7 +58,7 @@ export const fetchFromTMDB = async (endpoint: string, params: TMDBParams = {}): 
       throw new Error(`TMDB API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as T;
     return data;
   } catch (error) {
     console.error('❌ TMDB API Error:', error);
