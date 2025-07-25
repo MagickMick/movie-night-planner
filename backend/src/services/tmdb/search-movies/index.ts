@@ -1,4 +1,4 @@
-import { IMovie } from '../../../../../shared/interfaces/movie/types';
+import { ISearchMoviesResponse } from '@shared/interfaces/movie/types';
 import { fetchFromTMDB } from '../fetch-from-tmdb';
 
 /**
@@ -8,13 +8,7 @@ import { fetchFromTMDB } from '../fetch-from-tmdb';
     * @returns A promise that resolves to an object containing search results
     * and pagination information
 */
-export const searchMovies = async (query: string, limit = 10): Promise<{
-  movies: IMovie[];
-  total_results: number;
-  total_pages: number;
-  page: number;
-  query: string;
-}> => {
+export const searchMovies = async (query: string, limit = 10): Promise<ISearchMoviesResponse> => {
     try {
       if (!query || query.trim() === '') {
         return {
@@ -34,7 +28,7 @@ export const searchMovies = async (query: string, limit = 10): Promise<{
       });
 
       // Transform and limit the results
-      const movies = data.results.slice(0, limit).map(movie => ({
+      const movies = data.results.slice(0, limit).map((movie: any) => ({
         id: movie.id,
         title: movie.title,
         overview: movie.overview,
@@ -57,7 +51,7 @@ export const searchMovies = async (query: string, limit = 10): Promise<{
         query
       };
     } catch (error) {
-      console.error('❌ Error searching movies:', error.message);
+      console.error('❌ Error searching movies:', error instanceof Error ? error.message : error);
       throw error;
     }
   }

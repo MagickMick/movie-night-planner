@@ -1,12 +1,12 @@
 // TMDB API Configuration
-interface TMDBConfig {
+export interface TMDBConfig {
   baseURL: string;
   accessToken: string;
   apiKey: string;
 }
 
 // TMDB API Parameters
-interface TMDBParams {
+export interface TMDBParams {
   [key: string]: string | number | boolean | undefined | null;
 }
 
@@ -61,7 +61,7 @@ export const fetchFromTMDB = async (endpoint: string, params: TMDBParams = {}): 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('❌ TMDB API Error:', error.message);
+    console.error('❌ TMDB API Error:', error);
     throw error;
   }
 };
