@@ -12,7 +12,14 @@ interface MovieListProps {
 
 export const MovieList = ({ limit = 20 }: MovieListProps) => {
   const filters = useAtomValue(movieFiltersAtom);
-  const { searchQuery, selectedGenre } = filters;
+  const { searchQuery, selectedGenre, scoreSort } = filters;
+
+  // Convert scoreSort to TMDB API format
+  const getSortBy = (scoreSort: 'asc' | 'desc' | null): string => {
+    if (scoreSort === 'asc') return 'vote_average.asc';
+    if (scoreSort === 'desc') return 'vote_average.desc';
+    return 'popularity.desc'; // Default sort
+  };
 
   // Use the new discover movies hook that handles both search and genre filtering
   const {
@@ -26,7 +33,8 @@ export const MovieList = ({ limit = 20 }: MovieListProps) => {
   } = MovieHook.useInfiniteDiscoverMovies({
     query: searchQuery,
     with_genres: selectedGenre,
-    limit
+    limit,
+    sort_by: getSortBy(scoreSort)
   });
 
   const { ref, inView } = useInView({
@@ -34,7 +42,7 @@ export const MovieList = ({ limit = 20 }: MovieListProps) => {
     rootMargin: '100px',
   });
 
-  // Get all movies from all pages
+  // Get all movies from all pages (no need for frontend sorting anymore)
   const movies = useMemo(() => {
     return data?.pages.flatMap(page => page.movies) || [];
   }, [data]);
@@ -110,10 +118,16 @@ export const MovieList = ({ limit = 20 }: MovieListProps) => {
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold mb-2">
           {searchQuery ? `Search Results for "${searchQuery}"` : 'Popular Movies'}
+          {scoreSort && (
+            <span className="text-lg font-normal text-muted-foreground ml-2">
+              • Sorted by Score ({scoreSort === 'asc' ? 'Low to High' : 'High to Low'})
+            </span>
+          )}
         </h2>
         <p className="text-muted-foreground">
           Showing {movies.length} of {totalResults.toLocaleString()} movies
           {selectedGenre && ` in selected genre`}
+          {scoreSort && ` sorted by rating ${scoreSort === 'asc' ? '↑' : '↓'}`}
         </p>
       </div>
       

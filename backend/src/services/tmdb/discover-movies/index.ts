@@ -48,6 +48,22 @@ export const discoverMovies = async (options: DiscoverMoviesOptions = {}): Promi
         );
       }
 
+      // Apply sorting manually for search results (since /search/movie doesn't support sort_by)
+      if (sort_by && sort_by !== 'popularity.desc') {
+        filteredResults.sort((a: any, b: any) => {
+          if (sort_by === 'vote_average.asc') {
+            return (a.vote_average || 0) - (b.vote_average || 0);
+          } else if (sort_by === 'vote_average.desc') {
+            return (b.vote_average || 0) - (a.vote_average || 0);
+          } else if (sort_by === 'popularity.asc') {
+            return (a.popularity || 0) - (b.popularity || 0);
+          } else if (sort_by === 'popularity.desc') {
+            return (b.popularity || 0) - (a.popularity || 0);
+          }
+          return 0;
+        });
+      }
+
       const movies: IMovie[] = filteredResults.slice(0, limit).map((movie: any): IMovie => ({
         id: movie.id,
         title: movie.title,

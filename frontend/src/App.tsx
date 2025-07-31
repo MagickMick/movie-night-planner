@@ -31,7 +31,7 @@ function App() {
               <div className="p-8 border-b border-border">
                 <SearchBar 
                   placeholder="Search for movies..."
-                  className="max-w-2xl mx-auto"
+                  className="w-full"
                 />
               </div>
               

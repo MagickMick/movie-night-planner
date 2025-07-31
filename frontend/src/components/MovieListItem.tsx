@@ -28,7 +28,7 @@ export const MovieListItem = ({ movie }: MovieListItemProps) => {
         <div className="absolute top-2 right-2">
           <Badge variant="secondary" className="bg-black/70 text-white">
             <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
-            {movie.vote_average.toFixed(1)}
+            {movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}
           </Badge>
         </div>
       </div>
@@ -39,7 +39,7 @@ export const MovieListItem = ({ movie }: MovieListItemProps) => {
           <Calendar className="w-4 h-4" />
           {movie.release_date ? new Date(movie.release_date).getFullYear() : 'Unknown'}
           <span className="text-xs">•</span>
-          <span>{movie.vote_count} votes</span>
+          <span>{movie.vote_count || 0} votes</span>
         </div>
       </CardHeader>
       

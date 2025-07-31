@@ -6,18 +6,21 @@ interface DiscoverMoviesParams {
   query?: string;
   with_genres?: number | null;
   limit?: number;
+  sort_by?: string;
 }
 
 const fetchDiscoverMovies = async ({ 
   pageParam = 1, 
   query = '', 
   with_genres = null,
-  limit = 20 
+  limit = 20,
+  sort_by = 'popularity.desc'
 }: { pageParam: number } & DiscoverMoviesParams): Promise<IPopularMovies> => {
   const url = new URL(`${config.api.baseUrl}/movies/discover`);
   
   url.searchParams.append('page', pageParam.toString());
   url.searchParams.append('limit', limit.toString());
+  url.searchParams.append('sort_by', sort_by);
   
   if (query) {
     url.searchParams.append('query', query);
@@ -45,12 +48,12 @@ const fetchDiscoverMovies = async ({
 };
 
 export const useInfiniteDiscoverMovies = (params: DiscoverMoviesParams) => {
-  const { query = '', with_genres = null, limit = 20 } = params;
+  const { query = '', with_genres = null, limit = 20, sort_by = 'popularity.desc' } = params;
   
   return useInfiniteQuery({
-    queryKey: ['discoverMovies', query, with_genres, limit],
+    queryKey: ['discoverMovies', query, with_genres, limit, sort_by],
     queryFn: ({ pageParam = 1 }) => 
-      fetchDiscoverMovies({ pageParam, query, with_genres, limit }),
+      fetchDiscoverMovies({ pageParam, query, with_genres, limit, sort_by }),
     getNextPageParam: (lastPage) => {
       return lastPage.page < lastPage.total_pages ? lastPage.page + 1 : undefined;
     },
